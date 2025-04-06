@@ -16,8 +16,18 @@ function App() {
 
   const handleSearchRepo = async () => {
 
-    const {data} = await api.get(`repos/${currentRepo}`)
-
+    const { data } = await api.get(`repos/${currentRepo}`)
+    .catch((err) => {
+      switch (err.response.status) {
+        case 404:
+          alert('Repositório não encontrado');
+          break;
+        default:
+          alert('Erro ao buscar repositório');
+      }
+    });
+    
+    
     if(data.id){
 
       const isExist = repos.find(repo => repo.id === data.id);
@@ -26,11 +36,10 @@ function App() {
         setRepos(prev => [...prev, data]);
         setCurrentRepo('')
         return
+      } else {
+        alert('Repositório já adicionado na lista');
       }
-
     }
-    alert('Repositório não encontrado')
-
   }
 
   const handleRemoveRepo = (id) => {
